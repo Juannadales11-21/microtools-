@@ -1,0 +1,28 @@
+name: QA
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Static QA checks
+        run: node scripts/qa-static-checks.js
+
+      - name: Install Playwright
+        run: npx -y playwright@latest install --with-deps chromium
+
+      - name: Smoke tests
+        run: npx -y playwright@latest test --config=playwright.config.js
